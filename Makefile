@@ -25,6 +25,16 @@ cp_app: app_build
 cp_modules: kernel_modules
 	sudo cp $(OBJ).ko ~/linux/nfs/rootfs/lib/modules/4.1.15/ -f
 
+scp_app: app_build
+	sudo scp -o HostKeyAlgorithms=+ssh-rsa \
+    -o PubkeyAcceptedAlgorithms=+ssh-rsa \
+    ${OBJ} root@192.168.10.10:/home/root/modules/
+	
+scp_modules: kernel_modules
+	sudo scp -o HostKeyAlgorithms=+ssh-rsa \
+    -o PubkeyAcceptedAlgorithms=+ssh-rsa \
+    ${OBJ}.ko root@192.168.10.10:/home/root/modules/
+
 clean:
 	$(MAKE) -C $(KERNELDIR) M=$(CURRENT_PATH) clean
 	rm -f $(OBJ)app

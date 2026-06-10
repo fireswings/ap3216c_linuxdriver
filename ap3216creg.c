@@ -247,7 +247,7 @@ static const struct i2c_device_id ap3216c_id[] = {
 };
 
 static const struct of_device_id ap3216c_of_match[] = {
-    {.compatible = "hy,ap3216c"},
+    {.compatible = "ap3216c"},
     {},
 };
 
@@ -256,7 +256,7 @@ static struct i2c_driver ap3216c_driver = {
     .remove  = ap3216c_remove,
     .driver  = {
         .owner          = THIS_MODULE,
-        .name           = "ap3216c",
+        .name           = "ap3216cf",
         .of_match_table = ap3216c_of_match,
     },
     .id_table = ap3216c_id,
