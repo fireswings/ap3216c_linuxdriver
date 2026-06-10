@@ -1,6 +1,6 @@
-CROS_COMPILE := arm-linux-gnueabihf-
-CC := $(CROS_COMPILE)gcc
-KERNELDIR := /home/lzy/linux/IMX6uLL/linux/linux_hy
+CROSS_COMPILE := arm-linux-gnueabihf-
+CC := $(CROSS_COMPILE)gcc
+KERNELDIR := /home/lzy/linux/linux_4.1.15
 OBJ = ap3216creg
 CURRENT_PATH := $(shell pwd)
 

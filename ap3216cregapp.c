@@ -1,9 +1,16 @@
 #include <stdio.h>
-#include <linux/input.h>
+#include <stdlib.h>
 #include <fcntl.h>
-#include <unistd.h> 
+#include <unistd.h>
+#include <signal.h>
 
-static struct input_event inputevent;
+static volatile sig_atomic_t running = 1;
+
+static void sig_handler(int sig)
+{
+    (void)sig;
+    running = 0;
+}
 
 int main(int argc, char *argv[])
 {
@@ -11,32 +18,37 @@ int main(int argc, char *argv[])
     char *filename;
     unsigned short databuf[3];
     unsigned short ir, als, ps;
-    int ret = 0;
+    int ret;
 
-    if(argc != 2) {
-        printf("Error Usage!\n");
+    if (argc != 2) {
+        printf("Error Usage: %s <device>\n", argv[0]);
         return -1;
     }
-    
+
+    signal(SIGINT, sig_handler);
+    signal(SIGTERM, sig_handler);
+
     filename = argv[1];
     fd = open(filename, O_RDWR);
-    if(fd < 0) {
-        printf("can't open file %s\n", filename);
+    if (fd < 0) {
+        perror("open");
         return -1;
     }
 
-    while (1)
-    {
+    while (running) {
         ret = read(fd, databuf, sizeof(databuf));
-        if(ret == 0) {
-            ir = databuf[0];
+        if (ret > 0) {
+            ir  = databuf[0];
             als = databuf[1];
-            ps = databuf[2];
+            ps  = databuf[2];
             printf("ir = %d, als = %d, ps = %d\n", ir, als, ps);
+        } else if (ret < 0) {
+            perror("read");
+            break;
         }
         usleep(200000);
     }
-    close(fd);
 
-    return 0;    
+    close(fd);
+    return 0;
 }
